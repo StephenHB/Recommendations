@@ -258,3 +258,18 @@ class EmbeddingModel(tf.keras.Model):
                 name = feature+'_layer'
                 )
 
+    def call(self,features):
+        self.features = features
+        embeddings = []
+        for feature in self._all_features:
+            embedding_fn = self._embeddings[feature]
+            if (feature in self.normalizer_features):
+                embeddings.append(tf.reshape(embedding_fn(self.features[feature]),(-1,1)))
+            elif (feature in self.str_lookup_features) | (feature in self.int_lookup_features):
+                embeddings.append(embedding_fn(self.features[feature]))
+            elif (feature in self.str_features):
+                self.features[feature] = tf.expand_dims(self.features[feature],-1)
+                embeddings.append(embedding_fn(self.features[feature]))
+            else:
+                embeddings.append(embedding_fn(self.features[feature]))
+                
