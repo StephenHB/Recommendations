@@ -147,3 +147,10 @@ class AdaptLayers():
         return self._adapted_layers
     
 adapted_layers =  AdaptLayers(config, ratings).adapt()
+
+
+class EmbeddingModel(tf.keras.Model):
+    """
+    Creates the embedding layers for the tower
+    """
+    def __init__(self, config:dict, twoer_type:str, vocab_dict;dict, adapted_layers:Dict[str, tf.keras.layers.Layer]):
