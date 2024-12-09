@@ -9,7 +9,7 @@ import keras
 import tensorflow as tf
 import tensorflow_datasets as tfds
 import tensorflow_recommenders as tfrs
-from tensorflow.keras.utils import plot_model
+# from tensorflow.keras.utils import plot_model
 
 ratings = tfds.load ("movielens/100k-ratings",split = "train")
 movies = tfds.load ("movielens/100k-movies",split = "train")
