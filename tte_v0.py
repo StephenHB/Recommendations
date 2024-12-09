@@ -153,7 +153,7 @@ class EmbeddingModel(tf.keras.Model):
     """
     Creates the embedding layers for the tower
     """
-    def __init__(self, config:dict, twoer_type:str, vocab_dict:dict, adapted_layers:Dict[str, tf.keras.layers.Layer]):
+    def __init__(self, config:dict, tower_type:str, vocab_dict:dict, adapted_layers:Dict[str, tf.keras.layers.Layer]):
         """
         Model for encoding embedding layers
         Args:
@@ -166,11 +166,11 @@ class EmbeddingModel(tf.keras.Model):
         self.config = config
         self.vocab_dict =  vocab_dict
         self.adapted_layers = adapted_layers
-        self.str_lookup_features = self.config['str_lookup'][twoer_type]
-        self.int_lookup_features = self.config['int_lookup'][twoer_type]
-        self.normalizer_features = self.config['normalizer'][twoer_type]
-        self.str_features = self.config['str_vectorizer'][twoer_type]
-        self.list_features = self.config['list_vectorizer'][twoer_type]
+        self.str_lookup_features = self.config['str_lookup'][tower_type]
+        self.int_lookup_features = self.config['int_lookup'][tower_type]
+        self.normalizer_features = self.config['normalizer'][tower_type]
+        self.str_features = self.config['str_vectorizer'][tower_type]
+        self.list_features = self.config['list_vectorizer'][tower_type]
         self._all_features = self.str_lookup_features + self.int_lookup_features + self.normalizer_features + self.str_features + self.list_features
         self._embeddings = {}
 
@@ -273,21 +273,62 @@ class EmbeddingModel(tf.keras.Model):
             else:
                 embeddings.append(embedding_fn(self.features[feature]))
 
-    class L2NormLayer(tf.keras.layers.Layer):
-        """
-        Simple function that wraps l2 norm transformation in keras layer.
-        """
-        def __init__(self,**kwargs):
-            super(L2NormLayer,self).__init__(**kwargs)
+class L2NormLayer(tf.keras.layers.Layer):
+    """
+    Simple function that wraps l2 norm transformation in keras layer.
+    """
+    def __init__(self,**kwargs):
+        super(L2NormLayer,self).__init__(**kwargs)
 
-        @tf.function
-        def call(self, inputs, mask=None):
-            if mask is not None:
-                inputs = tf.ragged.boolean_mask(inputs, mask).to_tensor()
-                
-            return tf.math.l2_normalize(inputs, axis=-1) + tf.keras.backend.epsilon()
+    @tf.function
+    def call(self, inputs, mask=None):
+        if mask is not None:
+            inputs = tf.ragged.boolean_mask(inputs, mask).to_tensor()
+            
+        return tf.math.l2_normalize(inputs, axis=-1) + tf.keras.backend.epsilon()
+    
+    def compute_mask(self,inputs,mask=None):
+        return mask
+    
+class SingleTowerModel(tf.keras.Model):
+    def __init__(self, config:dict, tower_type:str, vocab_dict:dict, adapted_layers:tf.keras.layers.Layer):
+        """
+        Model for encoding embedding layers
+        Args:
+            config: dict of config vars
+            twoer_type: str of the type, can be 'product' or 'account'.
+            vocab_dict: a dict of vocabs for each layer.
+            adapted_layers: tf.keras.layers.Layer objects for each adapted layer
+        """
+        super().__init__()
+
+        self.embedding_model = EmbeddingModel(
+            config=config,
+            tower_type = tower_type,
+            vocab_dict = vocab_dict,
+            adapted_layers = adapted_layers
+        )
+
+        # Construct the layers
+        self.dense_layers = tf.keras.Sequential()
+
+        if config['cross_layer']:
+            self.dense_layers.add(tfrs.layers.dcn.Cross(
+                projection_dim = config['projection_dim'],
+                kernel_initializer="glorot_uniform"
+            ))
+
+        #Use ReLU activation for all but the last layer
+        for layer_size in config['layers'][:-1]:
+            self.dense_layers.add(tf.keras.layers.Dense(layer_size))
+
+        if config['norm_layer']:
+            self.dense_layers.add(L2NormLayer())
         
-        def compute_mask(self,inputs,mask=None):
-            return mask
-        
-        
+        if config['dropout_layer']:
+            self.dense_layers.add(tf.keras.layers.Dropout(config['dropout_rate']))
+
+    def call(self, features):
+        feature_embedding = self.embedding_model(features=features)
+        return self.dense_layers(feature_embedding)
+
