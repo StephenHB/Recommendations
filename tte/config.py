@@ -38,4 +38,15 @@ class BaseConfig:
                 'product': []
             }
         
+        self.feature_names = [
+                            "user_occupation_text",
+                            "movie_id",
+                            "movie_genres",
+                            "movie_title",
+                            "user_id",
+                            "user_occupation_label",
+                            "raw_user_age",
+                            "user_zip_code",
+                            "user_gender",
+                        ]
        
