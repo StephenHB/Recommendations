@@ -91,3 +91,25 @@ class TwoTowerModel(tfrs.Model):
         metrics["total_loss"] = total_loss
 
         return metrics
+    
+    def test_step(self, features:Dict[str,tf.Tensor],training:bool = False)->tf.Tensor:
+        """
+        Overrides the test_step method.
+        """
+        candidate_ids = None
+
+        if self.candidate_id is not None and self.task._remove_accidental_hits:
+            candidate_ids = features[self.config.product_id_col]
+
+        self.account_embeddings,self.product_embeddings=self(features)
+        loss = self.task(self.account_embedding, self.product_embeddings, candidate_ids=candidate_ids)
+
+        regularization_loss = sum(self.losses)
+        total_loss = loss + regularization_loss
+
+        metrics = {metric.name: metric.result() for metric in self.metrics}
+        metrics["loss"] = loss
+        metrics["regularization_loss"] = regularization_loss
+        metrics["total_loss"] = total_loss
+
+        return metrics
