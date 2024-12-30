@@ -24,7 +24,7 @@ class TwoTowerModel(tfrs.Model):
         """
         Model for encoding embedding layers
         Args:
-            config: dict of config vars
+            config: config object
             vocab_dict: a dict of vocabs for each layer.
             adapted_layers: tf.keras.layers.Layer objects for each adapted layer.
             label_probs: tf.lookup.StaticHashTable object for logQ corr.
