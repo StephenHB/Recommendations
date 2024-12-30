@@ -1,17 +1,17 @@
-from config import BaseConfig
+from tte.config.base import BaseConfig
 from typing import Dict, Text
 import numpy as np
 import tensorflow as tf
 import tensorflow_recommenders as tfrs
-from embedding_model import EmbeddingModel
-from l2_norm_layer import L2NormLayer
+from tte.model.embedding_model import EmbeddingModel
+from tte.model.l2_norm_layer import L2NormLayer
 
 class SingleTowerModel(tf.keras.Model):
-    def __init__(self, config:dict, tower_type:str, vocab_dict:dict, adapted_layers:tf.keras.layers.Layer):
+    def __init__(self, config:BaseConfig, tower_type:str, vocab_dict:dict, adapted_layers:tf.keras.layers.Layer):
         """
         Model for encoding embedding layers
         Args:
-            config: dict of config vars
+            config: config object
             twoer_type: str of the type, can be 'product' or 'account'.
             vocab_dict: a dict of vocabs for each layer.
             adapted_layers: tf.keras.layers.Layer objects for each adapted layer

@@ -1,4 +1,4 @@
-from config import BaseConfig
+from tte.config.base import BaseConfig
 from typing import Dict, Text
 import numpy as np
 import tensorflow as tf
@@ -11,7 +11,7 @@ class EmbeddingModel(tf.keras.Model):
         """
         Model for encoding embedding layers
         Args:
-            config: dict of config vars
+            config: config object
             twoer_type: str of the type, can be 'product' or 'account'.
             vocab_dict: a dict of vocabs for each layer.
             adapted_layers: Dict objects for each adapted layer.

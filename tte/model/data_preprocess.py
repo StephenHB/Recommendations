@@ -1,7 +1,7 @@
 import tensorflow_datasets as tfds
 import tensorflow as tf
 import numpy as np
-from config import BaseConfig
+from tte.config.base import BaseConfig
 
 
 class Datapreprocess:
