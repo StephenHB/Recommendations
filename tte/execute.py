@@ -1,4 +1,4 @@
-from config import BaseConfig
+from tte.config.base import BaseConfig
 from typing import Dict, Text
 import numpy as np
 import tensorflow as tf
