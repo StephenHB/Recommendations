@@ -3,9 +3,9 @@ from typing import Dict, Text
 import numpy as np
 import tensorflow as tf
 import tensorflow_recommenders as tfrs
-from embedding_model import EmbeddingModel
-from l2_norm_layer import L2NormLayer
-from single_tower_model import SingleTowerModel
+from tte.model.embedding_model import EmbeddingModel
+from tte.model.l2_norm_layer import L2NormLayer
+from tte.model.single_tower_model import SingleTowerModel
 
 class TwoTowerModel(tfrs.Model):
     """

@@ -4,13 +4,13 @@ import numpy as np
 import tensorflow as tf
 import tensorflow_recommenders as tfrs
 import tensorflow_datasets as tfds
-from data_preprocess import Datapreprocess
-from adapt_layer import AdaptLayers
-from embedding_model import EmbeddingModel
-from log_q_correlation import LogQCorrelation
-from l2_norm_layer import L2NormLayer
-from single_tower_model import SingleTowerModel
-from two_tower_model import TwoTowerModel
+from tte.model.data_preprocess import Datapreprocess
+from tte.model.adapt_layer import AdaptLayers
+from tte.model.embedding_model import EmbeddingModel
+from tte.model.log_q_correlation import LogQCorrelation
+from tte.model.l2_norm_layer import L2NormLayer
+from tte.model.single_tower_model import SingleTowerModel
+from tte.model.two_tower_model import TwoTowerModel
 
 # Prepare the inlputs
 config = BaseConfig()
