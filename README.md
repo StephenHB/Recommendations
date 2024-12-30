@@ -42,9 +42,9 @@ The **Berry–Levinsohn–Pakes (BLP) model** is a widely used econometric model
 1. **Specification of the Utility Function**:
    Consumers choose the product that maximizes their utility, which depends on product characteristics (e.g., price, features) and their preferences.
    The utility of consumer \( i \) for product \( j \) can be written as:
-   \[
+   $$
    U_{ij} = \beta_j X_j + \alpha_i Z_j + \epsilon_{ij}
-   \]
+   $$
    where:
    - \( U_{ij} \) is the utility of consumer \( i \) from product \( j \),
    - \( X_j \) is a vector of observable characteristics for product \( j \),
@@ -54,9 +54,9 @@ The **Berry–Levinsohn–Pakes (BLP) model** is a widely used econometric model
 
 2. **Market Share Equation**:
    The market share \( s_j \) for product \( j \) is derived from the probability of consumer \( i \) choosing product \( j \):
-   \[
+   $$
    s_j = \frac{e^{X_j \beta}}{\sum_{k} e^{X_k \beta}}
-   \]
+   $$
    where:
    - \( X_j \) represents the characteristics of product \( j \),
    - \( \beta \) is a vector of parameters related to the characteristics.
@@ -66,17 +66,9 @@ The **Berry–Levinsohn–Pakes (BLP) model** is a widely used econometric model
 
 4. **Estimation**:
    The parameters of the demand system are typically estimated using **Generalized Method of Moments (GMM)**:
-   \[
+   $$
    \hat{\theta} = \arg \min_{\theta} \left( g(\theta)' W g(\theta) \right)
-   \]
+   $$
    where:
-   - \( g(\theta) \) is a vector of sample moments (based on the instruments and model predictions),
-   - \( W \) is a weighting matrix that accounts for heteroskedasticity.
+   - \( g(\theta) \) is a vector of sample moments (based on the in
 
-#### Applications of the BLP Model:
-- **Market Structure Analysis**: The BLP model is used to study the effects of market structure on pricing, consumer welfare, and firm competition.
-- **Policy Analysis**: The model is useful for evaluating the effects of mergers, price regulations, and other policy interventions in markets with differentiated products.
-- **Product Differentiation**: It helps quantify how product characteristics affect consumer choices and how firms can differentiate their products in competitive markets.
-
-#### Example:
-In the context of the automobile market, the BLP model could be used to estimate how consumers respond to changes in car prices and features (e.g., horsepower, fuel efficiency). The model would account for the fact that different consumers have different preferences for these features, and it would estimate the impact of these preferences on market shares and pricing behavior.
