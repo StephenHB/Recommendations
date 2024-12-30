@@ -1,4 +1,4 @@
-class Config:
+class BaseConfig:
     def __init__(self):
         
         self.embedding_dimension = 16
@@ -12,7 +12,8 @@ class Config:
         self.list_vectorizer_config = self.get_list_vectorizer_config()
         self.str_lookup_config = self.get_str_lookup_config()
         self.normalizer_config = self.get_normalizer_config()
-        
+
+
         def get_str_vectorizer_config(self):
             return {
                 'account': [],
@@ -36,4 +37,5 @@ class Config:
                 'account': ['user_rating'],
                 'product': []
             }
+        
        
