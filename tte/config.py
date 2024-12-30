@@ -11,6 +11,7 @@ class BaseConfig:
         self.str_vectorizer_config = self.get_str_vectorizer_config()
         self.list_vectorizer_config = self.get_list_vectorizer_config()
         self.str_lookup_config = self.get_str_lookup_config()
+        self.int_lookup_config = self.get_int_lookup_config()
         self.normalizer_config = self.get_normalizer_config()
 
 
@@ -27,6 +28,12 @@ class BaseConfig:
             }
 
         def get_str_lookup_config(self):
+            return {
+                'account': [],
+                'product': []
+            }
+        
+        def get_int_lookup_config(self):
             return {
                 'account': [],
                 'product': []
