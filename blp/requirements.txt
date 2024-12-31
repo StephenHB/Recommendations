@@ -1,4 +1,7 @@
-python==3.9.15
-tensorflow-probability==0.14.0
-tensorflow==2.6.0
-numpy==1.19.5
+python==3.9.21
+tensorflow-probability==0.25.0
+tensorflow==2.15.0
+numpy==1.26.4
+tensorflow-deps==2.9.0
+tensorflow-metal==0.5.0
+tensorflow-macos==2.15.0
