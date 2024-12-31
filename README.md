@@ -52,8 +52,8 @@ The **Berry–Levinsohn–Pakes (BLP) model** is a widely used econometric model
    
    where:
    - $U_{ij}$ is the utility of consumer $i$ from product $j$,
-   - $X_j$is a vector of observable characteristics for product $j$,
-   - $Z_j$is a vector of characteristics influencing individual preferences,
+   - $X_j$ is a vector of observable characteristics for product $j$,
+   - $Z_j$ is a vector of characteristics influencing individual preferences,
    - $\beta_j$ and $\alpha_i$ are parameters to be estimated,
    - $\epsilon_{ij}$ represents unobserved factors (such as taste variation).
 
