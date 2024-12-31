@@ -1,5 +1,11 @@
 # Recommendations
-## Experiment with different recommendation systems
+## 1. What is this repository for?
+This repository is designed to develop diverse solutions for assortment recommendations, incorporating several widely recognized models from both industry and academia. The objective is to create an automated system that seamlessly handles data preparation, model training and validation, and model selection to deliver optimal recommendations at scale. 
+
+- The implemented models include discrete choice models (e.g., BLP), two-tower embeddings, Factorization Machines, and Collaborative Filtering.
+- Validation method could include multi armed bandit (MAB), etc.
+   
+## 2. Experiment with different recommendation systems
 
 ### Two Tower Embedding (tte)
 The **Two-Tower Embedding Model** is a neural network architecture commonly used for tasks such as recommendation systems, information retrieval, and matching problems. The model consists of two separate towers (or sub-networks) that learn embeddings for two different types of inputs (e.g., user and item, query and document).
@@ -20,7 +26,6 @@ The **Two-Tower Embedding Model** is a neural network architecture commonly used
   - **Scalability**: The separate towers allow for efficient training on large datasets by enabling the reuse of embeddings.
   - **Flexibility**: Each tower can be optimized independently, allowing for different types of architectures for different inputs.
 
-- **Example**: In a movie recommendation system, one tower could process user information (e.g., demographics, preferences), while the other processes movie features (e.g., genre, cast). The model learns to match users with movies they are likely to enjoy.
 
 ### Berry–Levinsohn–Pakes (BLP) Model
 
@@ -42,33 +47,33 @@ The **Berry–Levinsohn–Pakes (BLP) model** is a widely used econometric model
 1. **Specification of the Utility Function**:
    Consumers choose the product that maximizes their utility, which depends on product characteristics (e.g., price, features) and their preferences.
    The utility of consumer \( i \) for product \( j \) can be written as:
-   \[
-   U_{ij} = \beta_j X_j + \alpha_i Z_j + \epsilon_{ij}
-   \]
+   
+   $U_{ij} = \beta_j X_j + \alpha_i Z_j + \epsilon_{ij}$
+   
    where:
-   - \( U_{ij} \) is the utility of consumer \( i \) from product \( j \),
-   - \( X_j \) is a vector of observable characteristics for product \( j \),
-   - \( Z_j \) is a vector of characteristics influencing individual preferences,
-   - \( \beta_j \) and \( \alpha_i \) are parameters to be estimated,
-   - \( \epsilon_{ij} \) represents unobserved factors (such as taste variation).
+   - $U_{ij}$ is the utility of consumer $i$ from product $j$,
+   - $X_j$is a vector of observable characteristics for product $j$,
+   - $Z_j$is a vector of characteristics influencing individual preferences,
+   - $\beta_j$ and $\alpha_i$ are parameters to be estimated,
+   - $\epsilon_{ij}$ represents unobserved factors (such as taste variation).
 
 2. **Market Share Equation**:
-   The market share \( s_j \) for product \( j \) is derived from the probability of consumer \( i \) choosing product \( j \):
-   \[
-   s_j = \frac{e^{X_j \beta}}{\sum_{k} e^{X_k \beta}}
-   \]
+   The market share $s_j$ for product $j$ is derived from the probability of consumer $i$ choosing product $j$:
+   
+   $$s_j = \frac{e^{X_j \beta}}{\sum_{k} e^{X_k \beta}}$$
+
    where:
-   - \( X_j \) represents the characteristics of product \( j \),
-   - \( \beta \) is a vector of parameters related to the characteristics.
+   - $X_j$ represents the characteristics of product $j$,
+   - $\beta$ is a vector of parameters related to the characteristics.
 
 3. **Identification of Parameters**:
    The model identifies the parameters using **instrumental variables** to handle the endogeneity of prices, often through the assumption that instruments are correlated with prices but not with unobserved demand shocks.
 
 4. **Estimation**:
    The parameters of the demand system are typically estimated using **Generalized Method of Moments (GMM)**:
-   \[
-   \hat{\theta} = \arg \min_{\theta} \left( g(\theta)' W g(\theta) \right)
-   \]
+   
+   $$\hat{\theta} = \arg \min_{\theta} \left( g(\theta)' W g(\theta) \right)$$
+   
  
 
 
