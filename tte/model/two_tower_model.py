@@ -1,5 +1,5 @@
 from tte.config.base import BaseConfig
-from typing import Dict, Text
+from typing import Dict, Text, Tuple
 import numpy as np
 import tensorflow as tf
 import tensorflow_recommenders as tfrs
@@ -14,10 +14,10 @@ class TwoTowerModel(tfrs.Model):
     """
 
     def __init__(self, 
-                 config:BaseConfig, 
-                 vocab_dict:dict, 
-                 adapted_layers:tf.keras.layers.Layer, 
-                 label_probs:tf.lookup.StaticHashTable, 
+                 config: BaseConfig, 
+                 vocab_dict: dict, 
+                 adapted_layers: tf.keras.layers.Layer, 
+                 label_probs: tf.lookup.StaticHashTable, 
                  lookup: tf.keras.layers.StringLookup,
                  task: tfrs.tasks.Retrieval
                  ):
@@ -36,46 +36,75 @@ class TwoTowerModel(tfrs.Model):
         self.label_probs = label_probs
         self.lookup = lookup
         self.task = task
+        
+        # Account tower (user embeddings)
         self.account_model = tf.keras.Sequential([
-            SingleTowerModel(config = config,
-                             tower_type = 'account',
-                             vocab_dict=vocab_dict,
-                             adapted_layers=adapted_layers
-                             ),
+            SingleTowerModel(config=config,
+                           tower_type='account',
+                           vocab_dict=vocab_dict,
+                           adapted_layers=adapted_layers
+                           ),
+            tf.keras.layers.Dense(config.embedding_dimension)
+        ])
+        
+        # Product tower (item embeddings) - This was missing!
+        self.product_model = tf.keras.Sequential([
+            SingleTowerModel(config=config,
+                           tower_type='product',
+                           vocab_dict=vocab_dict,
+                           adapted_layers=adapted_layers
+                           ),
             tf.keras.layers.Dense(config.embedding_dimension)
         ])
 
-    def compute_loss(self, features:Dict[str,tf.Tensor],training:bool = False)->tf.Tensor:
-        user_embeddings,item_embeddings = self(features)
-        return self.task(user_embeddings,item_embeddings,compute_metrics=not training)
+    def compute_loss(self, features: Dict[str, tf.Tensor], training: bool = False) -> tf.Tensor:
+        """Compute the loss for the model"""
+        user_embeddings, item_embeddings = self(features)
+        return self.task(user_embeddings, item_embeddings, compute_metrics=not training)
     
-    def call(self, features:Dict[str,tf.Tensor],training:bool = False)->tf.Tensor:
+    def call(self, features: Dict[str, tf.Tensor], training: bool = False) -> Tuple[tf.Tensor, tf.Tensor]:
         """
         Overrides the call method of the model to return the embeddings of the accounts and products.
+        
+        Args:
+            features: Dictionary of feature tensors
+            training: Whether in training mode
+            
+        Returns:
+            Tuple of (account_embeddings, product_embeddings)
         """
         self.account_embeddings = self.account_model(features)
         self.product_embeddings = self.product_model(features)
 
         return self.account_embeddings, self.product_embeddings
     
-    def train_step(self, features:Dict[str,tf.Tensor],training:bool = False)->tf.Tensor:
+    def train_step(self, features: Dict[str, tf.Tensor]) -> Dict[str, tf.Tensor]:
         """
         Overrides the train-step method of the model to return the losses and metrics.
+        
+        Args:
+            features: Dictionary of feature tensors
+            
+        Returns:
+            Dictionary of metrics
         """
         candidate_ids, candidate_sampling_probability = None, None
-        self.true_label = self.lookupconfig[['product_id_col']](features[self.config.product_id_col])
+        
+        # Fix variable name inconsistency
+        self.true_label = self.lookup(features[self.config.product_id_col])
         self.candidate_id = self.config.product_id_col
+        
         if self.candidate_id is not None and self.task._remove_accidental_hits:
             candidate_ids = features[self.candidate_id]
 
         with tf.GradientTape() as tape:
-            self.account_embeddings, self.product_embeddings=self(features)
+            self.account_embeddings, self.product_embeddings = self(features)
 
             loss = self.task(
                 self.account_embeddings,
                 self.product_embeddings,
-                compute_metrics = False,
-                candidate_ids = candidate_ids,
+                compute_metrics=False,
+                candidate_ids=candidate_ids,
                 candidate_sampling_probability=candidate_sampling_probability
             )
 
@@ -92,17 +121,25 @@ class TwoTowerModel(tfrs.Model):
 
         return metrics
     
-    def test_step(self, features:Dict[str,tf.Tensor],training:bool = False)->tf.Tensor:
+    def test_step(self, features: Dict[str, tf.Tensor]) -> Dict[str, tf.Tensor]:
         """
         Overrides the test_step method.
+        
+        Args:
+            features: Dictionary of feature tensors
+            
+        Returns:
+            Dictionary of metrics
         """
         candidate_ids = None
 
         if self.candidate_id is not None and self.task._remove_accidental_hits:
             candidate_ids = features[self.config.product_id_col]
 
-        self.account_embeddings,self.product_embeddings=self(features)
-        loss = self.task(self.account_embedding, self.product_embeddings, candidate_ids=candidate_ids)
+        self.account_embeddings, self.product_embeddings = self(features)
+        
+        # Fix variable name inconsistency
+        loss = self.task(self.account_embeddings, self.product_embeddings, candidate_ids=candidate_ids)
 
         regularization_loss = sum(self.losses)
         total_loss = loss + regularization_loss

@@ -1,3 +1,197 @@
+# Recommendations Project
+
+A comprehensive collection of recommendation system implementations using both classical econometric methods and modern deep learning approaches.
+
+## Overview
+
+This project contains two main recommendation approaches:
+
+1. **BLP (Berry, Levinsohn, and Pakes)**: Classical econometric approach using instrumental variables and two-stage least squares
+2. **TTE (Two Tower Embedding)**: Modern deep learning approach using TensorFlow Recommenders
+
+## Project Structure
+
+```
+Recommendations/
+├── blp/                    # BLP econometric model
+│   ├── config/            # Configuration classes
+│   ├── model/             # Core estimation logic
+│   ├── test/              # Test suite
+│   ├── example_usage.py   # Usage examples
+│   └── README.md          # BLP documentation
+├── tte/                    # Two Tower Embedding model
+│   ├── config/            # Configuration classes
+│   ├── model/             # Core model components
+│   ├── utils/             # Utility functions
+│   ├── execute.py         # Main execution script
+│   └── README.md          # TTE documentation
+├── .gitignore             # Git ignore rules
+├── LICENSE                # Project license
+└── README.md              # This file
+```
+
+## Quick Start
+
+### Prerequisites
+
+- Python >= 3.9, < 3.12
+- TensorFlow >= 2.15.0
+- NumPy >= 1.21.0
+- Pandas >= 1.5.0
+
+### Installation
+
+1. Clone the repository:
+```bash
+git clone <repository-url>
+cd Recommendations
+```
+
+2. Install dependencies for both projects:
+```bash
+# Install BLP dependencies
+pip install -r blp/requirements.txt
+
+# Install TTE dependencies
+pip install -r tte/requirements.txt
+```
+
+## BLP Model
+
+The BLP (Berry, Levinsohn, and Pakes) model is a classical econometric approach for demand estimation that addresses endogeneity using instrumental variables.
+
+### Key Features
+- Two-stage least squares (2SLS) estimation
+- Instrumental variables support
+- Tikhonov regularization
+- TensorFlow-based computation
+
+### Quick Usage
+```python
+from blp.config.base import Base
+from blp.model.estimation import TFEstimator
+import pandas as pd
+
+# Configure and run
+config = Base()
+config.target_name = "quantity"
+config.exog_ind_names = ["income"]
+config.exog_dep_names = ["price"]
+config.instrument_variable_names = ["cost", "wage"]
+
+estimator = TFEstimator()
+estimator.set_config(config).set_data(data)
+results = estimator.fit()
+```
+
+### Testing
+```bash
+cd blp/test
+python run_tests.py
+```
+
+## TTE Model
+
+The Two Tower Embedding (TTE) model is a modern deep learning approach for recommendation systems using TensorFlow Recommenders.
+
+### Key Features
+- Separate user and item embedding towers
+- LogQ correlation for bias correction
+- Flexible feature processing
+- Production-ready with TFRS
+
+### Quick Usage
+```python
+from tte.config.base import BaseConfig
+from tte.model.two_tower_model import TwoTowerModel
+import tensorflow_recommenders as tfrs
+
+# Configure and run
+config = BaseConfig()
+task = tfrs.tasks.Retrieval(remove_accidental_hits=True)
+model = TwoTowerModel(config=config, ...)
+model.compile(optimizer=tf.keras.optimizers.Adagrad(learning_rate=0.1))
+model.fit(training_data, epochs=config.num_epochs)
+```
+
+### Training
+```bash
+cd tte
+python execute.py
+```
+
+## Model Comparison
+
+| Aspect | BLP | TTE |
+|--------|-----|-----|
+| **Approach** | Classical econometrics | Deep learning |
+| **Method** | 2SLS with IV | Two-tower embeddings |
+| **Use Case** | Demand estimation | General recommendations |
+| **Data Requirements** | Structured, IV needed | Flexible feature types |
+| **Scalability** | Medium | High |
+| **Interpretability** | High | Medium |
+| **Production Ready** | Yes | Yes |
+
+## Development
+
+### Code Quality
+
+Both projects include:
+- Type hints throughout
+- Comprehensive error handling
+- Unit tests
+- Documentation
+- Linting configuration
+
+### Running Tests
+
+```bash
+# BLP tests
+cd blp/test
+python run_tests.py
+
+# TTE tests (if available)
+cd tte
+python -m pytest
+```
+
+### Code Style
+
+The project follows PEP 8 guidelines with:
+- Black code formatting
+- Pylint for static analysis
+- Type checking with mypy
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Add tests
+5. Ensure all tests pass
+6. Submit a pull request
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## References
+
+### BLP Model
+- Berry, S., Levinsohn, J., & Pakes, A. (1995). Automobile prices in market equilibrium. Econometrica, 63(4), 841-890.
+- Nevo, A. (2001). Measuring market power in the ready-to-eat cereal industry. Econometrica, 69(2), 307-342.
+
+### TTE Model
+- Covington, P., Adams, J., & Sargin, E. (2016). Deep neural networks for youtube recommendations.
+- Yi, X., Yang, J., Hong, L., Cheng, D., Heldt, L., Kumthekar, A., ... & Chi, E. H. (2019). Sampling-bias-corrected neural modeling for large corpus item recommendations.
+
+## Support
+
+For questions and support:
+- Check the individual project READMEs in `blp/README.md` and `tte/README.md`
+- Review the example usage files
+- Run the test suites for verification
+
 # Recommendations
 ## 1. What is this repository for?
 This repository is designed to develop diverse solutions for assortment recommendations, incorporating several widely recognized models from both industry and academia. The objective is to create an automated system that seamlessly handles data preparation, model training and validation, and model selection to deliver optimal recommendations at scale. 
